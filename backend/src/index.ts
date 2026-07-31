@@ -9,6 +9,7 @@ import flagsRouter from "./routes/flags";
 import reportsRouter from "./routes/reports";
 import adminRouter from "./routes/admin";
 import preferencesRouter from "./routes/preferences";
+import notificationsRouter from "./routes/notifications";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/api/flags", requireAuth as any, flagsRouter);
 app.use("/api/reports", requireAuth as any, reportsRouter);
 app.use("/api/preferences", requireAuth as any, preferencesRouter);
 app.use("/api/admin", requireAuth as any, adminRouter);
+app.use("/api/notifications", requireAuth as any, notificationsRouter);
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   if (err.name === "UnauthorizedError") {

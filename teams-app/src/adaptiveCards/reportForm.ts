@@ -1,4 +1,15 @@
-export function buildReportFormCard(messageId: string, reportedUpn: string) {
+export function buildReportFormCard(messageId: string, reportedUpn: string, isInternal: boolean) {
+  const notifyToggle = isInternal
+    ? [
+        {
+          type: "Input.Toggle",
+          id: "notifySender",
+          title: "Send sender a nudge (opens a draft DM to them after submitting)",
+          value: "false",
+        },
+      ]
+    : [];
+
   return {
     type: "AdaptiveCard",
     $schema: "http://adaptivecards.io/schemas/adaptive-card.json",
@@ -38,6 +49,7 @@ export function buildReportFormCard(messageId: string, reportedUpn: string) {
         maxLength: 500,
         isMultiline: true,
       },
+      ...notifyToggle,
       {
         type: "Input.Text",
         id: "messageId",
@@ -48,6 +60,12 @@ export function buildReportFormCard(messageId: string, reportedUpn: string) {
         type: "Input.Text",
         id: "reportedUpn",
         value: reportedUpn,
+        isVisible: false,
+      },
+      {
+        type: "Input.Text",
+        id: "isInternal",
+        value: String(isInternal),
         isVisible: false,
       },
     ],

@@ -65,6 +65,19 @@ model AdminConfig {
   @@map("admin_config")
 }
 
+model SenderNotification {
+  id           String   @id @default(cuid())
+  messageId    String   @map("message_id")
+  senderUpn    String   @map("sender_upn")
+  notifierUpn  String   @map("notifier_upn")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([senderUpn])
+  @@index([notifierUpn])
+  @@index([createdAt])
+  @@map("sender_notifications")
+}
+
 model AuditLog {
   id        String   @id @default(cuid())
   actorUpn  String   @map("actor_upn")

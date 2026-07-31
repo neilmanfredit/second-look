@@ -86,6 +86,50 @@ button:hover:not(:disabled) { background: #106ebe; }
 #report-status.success { background: #f0faf0; color: #1a5c1a; }
 #report-status.error { background: #fff0f0; color: #8b0000; }
 
+.notify-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.notify-text {
+  flex: 1;
+}
+
+.notify-text strong {
+  font-size: 13px;
+}
+
+.notify-text p {
+  font-size: 11px;
+  color: #666;
+  margin: 3px 0 0;
+}
+
+#notify-btn {
+  flex-shrink: 0;
+  width: auto;
+  padding: 7px 12px;
+  background: #f3f2f1;
+  color: #323130;
+  border: 1px solid #c8c6c4;
+  font-size: 12px;
+  border-radius: 3px;
+}
+
+#notify-btn:hover { background: #e1dfdd; }
+
+#notify-status {
+  margin-top: 6px;
+  font-size: 12px;
+  padding: 5px 8px;
+  border-radius: 3px;
+}
+
+#notify-status.success { background: #f0faf0; color: #1a5c1a; }
+#notify-status.error { background: #fff0f0; color: #8b0000; }
+
 .toggle {
   display: flex;
   align-items: center;

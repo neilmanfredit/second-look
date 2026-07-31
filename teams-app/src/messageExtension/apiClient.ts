@@ -57,3 +57,17 @@ export async function submitReport(payload: ReportPayload): Promise<void> {
 
   if (!res.ok) throw Object.assign(new Error("Report API error"), { status: res.status });
 }
+
+export async function logNotification(payload: { messageId: string; senderUpn: string }): Promise<void> {
+  const res = await fetch(`${BACKEND_URL}/api/notifications`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: await authHeader(),
+    },
+    body: JSON.stringify(payload),
+  });
+
+  // Non-fatal — notification logging failure shouldn't break the report flow
+  if (!res.ok) console.warn("Notification log failed:", res.status);
+}

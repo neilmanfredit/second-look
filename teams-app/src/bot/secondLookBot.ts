@@ -6,7 +6,7 @@ import {
   Activity,
 } from "botbuilder";
 import { buildReportFormCard, buildFlagIndicatorCard } from "../adaptiveCards/reportForm";
-import { submitReport, checkAndStoreFlag } from "../messageExtension/apiClient";
+import { submitReport, checkAndStoreFlag, logNotification } from "../messageExtension/apiClient";
 
 export class SecondLookBot extends TeamsActivityHandler {
   constructor() {
@@ -62,22 +62,26 @@ export class SecondLookBot extends TeamsActivityHandler {
   }
 
   async handleTeamsMessagingExtensionFetchTask(
-    _context: TurnContext,
+    context: TurnContext,
     action: MessagingExtensionAction
   ): Promise<MessagingExtensionActionResponse> {
     const messageId = action.messagePayload?.id ?? "";
     const reportedUpn = action.messagePayload?.from?.user?.userPrincipalName ?? "";
+    const reporterUpn = context.activity.from?.aadObjectId ?? context.activity.from?.name ?? "";
+
+    // Show the notify toggle only when sender and reporter share the same tenant domain
+    const isInternal = sharesTenanDomain(reportedUpn, reporterUpn);
 
     return {
       task: {
         type: "continue",
         value: {
           title: "Report message",
-          height: 450,
+          height: isInternal ? 500 : 450,
           width: 500,
           card: {
             contentType: "application/vnd.microsoft.card.adaptive",
-            content: buildReportFormCard(messageId, reportedUpn),
+            content: buildReportFormCard(messageId, reportedUpn, isInternal),
           },
         },
       },
@@ -92,8 +96,10 @@ export class SecondLookBot extends TeamsActivityHandler {
       action: string;
       messageId: string;
       reportedUpn: string;
+      isInternal: string;
       reasonCode: string;
       note?: string;
+      notifySender?: string;
     };
 
     if (data.action === "cancel") {
@@ -113,6 +119,21 @@ export class SecondLookBot extends TeamsActivityHandler {
         reasonCode: data.reasonCode,
         note: data.note,
       });
+
+      const wantsToNotify = data.notifySender === "true" && data.isInternal === "true";
+      if (wantsToNotify) {
+        // Log the intent; the reporter should follow up with a direct Teams message.
+        // Full proactive messaging to the sender requires admin-consented
+        // messageTeamMembers scope, which is out of scope for individual install.
+        await logNotification({ messageId: data.messageId, senderUpn: data.reportedUpn });
+        return {
+          task: {
+            type: "message",
+            value: `Report submitted. Send ${data.reportedUpn} a direct message to let them know — a draft nudge message is ready to copy:\n\n"Hi, I wanted to flag that a message you sent recently appeared to have a short review time relative to its length. No action needed — just a heads-up."`,
+          },
+        };
+      }
+
       return { task: { type: "message", value: "Report submitted. Thank you." } };
     } catch (err: any) {
       if (err.status === 429) {
@@ -121,6 +142,13 @@ export class SecondLookBot extends TeamsActivityHandler {
       return { task: { type: "message", value: "Failed to submit. Please try again." } };
     }
   }
+}
+
+function sharesTenanDomain(upnA: string, upnB: string): boolean {
+  if (!upnA || !upnB) return false;
+  const domainA = upnA.split("@")[1]?.toLowerCase();
+  const domainB = upnB.split("@")[1]?.toLowerCase();
+  return !!domainA && domainA === domainB;
 }
 
 function countWords(text: string): number {
