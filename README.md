@@ -38,13 +38,6 @@ npm run dev -w teams-app
 
 See `docs/deployment.md`. The backend runs on Azure App Service (Linux, Node 20) in the neilmanfred.com / fredianshield.com M365 tenant. CI/CD via `.github/workflows/deploy-backend.yml` — requires `AZURE_WEBAPP_PUBLISH_PROFILE` set as a GitHub secret.
 
-## Open questions
-
-Before go-live, confirm:
-1. ~~Tenant-wide admin deployment vs. individual install~~ — **decided: individual install, user consent only**
-2. Should senders see their own message was flagged, or is this recipient-only?
-3. M365 dev tenant available, or piloting against production?
-
 ## Licence
 
 CC BY-NC-SA 4.0 — see `LICENSE`.
