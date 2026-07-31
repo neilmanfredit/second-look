@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Teams – Report Dialog</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", system-ui, sans-serif; font-size: 14px; background: #1b1a1a; }
+
+  .teams-shell { display: flex; width: 1200px; height: 800px; position: relative; }
+
+  /* Rail */
+  .rail { width: 68px; background: #201f1f; display: flex; flex-direction: column; align-items: center; padding: 8px 0; gap: 4px; }
+  .rail-icon { width: 48px; height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; gap: 3px; color: #c8c6c4; font-size: 20px; position: relative; }
+  .rail-icon.active { color: #fff; }
+  .rail-icon__label { font-size: 9px; color: #c8c6c4; }
+  .rail-icon.active .rail-icon__label { color: #fff; }
+
+  /* Left panel */
+  .left-panel { width: 260px; background: #252424; display: flex; flex-direction: column; }
+  .left-panel__header { padding: 12px 16px 8px; }
+  .left-panel__title { color: #fff; font-size: 15px; font-weight: 600; }
+  .team-item { padding: 6px 16px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .team-avatar { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: white; flex-shrink: 0; }
+  .team-name { color: #fff; font-size: 13px; }
+  .channel-item { padding: 5px 16px 5px 52px; color: #c8c6c4; font-size: 12px; cursor: pointer; }
+  .channel-item.active { color: #fff; font-weight: 600; }
+
+  /* Main chat area (blurred background) */
+  .chat-area { flex: 1; display: flex; flex-direction: column; background: #1b1a1a; filter: blur(1px); }
+  .chat-header { height: 48px; background: #1b1a1a; border-bottom: 1px solid #2d2c2c; display: flex; align-items: center; padding: 0 16px; gap: 8px; }
+  .chat-header__name { color: #fff; font-size: 15px; font-weight: 600; }
+  .messages { flex: 1; padding: 16px 20px; }
+  .msg { display: flex; gap: 10px; padding: 4px 0; }
+  .msg-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: white; flex-shrink: 0; margin-top: 2px; }
+  .msg-meta { display: flex; align-items: baseline; gap: 8px; margin-bottom: 3px; }
+  .msg-sender { color: #fff; font-size: 13px; font-weight: 600; }
+  .msg-time { color: #a19f9d; font-size: 11px; }
+  .msg-text { color: #d6d6d6; font-size: 14px; line-height: 1.5; }
+  .compose { padding: 12px 16px; border-top: 1px solid #2d2c2c; }
+  .compose-box { background: #2d2c2c; border-radius: 6px; padding: 10px 14px; color: #a19f9d; font-size: 13px; }
+
+  /* Context menu (··· popup showing the action) */
+  .context-menu-wrap { position: absolute; top: 200px; left: 540px; z-index: 5; }
+  .msg-hover-actions { position: absolute; top: -36px; right: -10px; background: #292929; border: 1px solid #383838; border-radius: 6px; display: flex; gap: 2px; padding: 3px; box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+  .hover-btn { width: 30px; height: 30px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; color: #c8c6c4; }
+  .hover-btn:hover, .hover-btn.active { background: #383838; color: #fff; }
+  .context-menu { background: #2d2c2c; border: 1px solid #404040; border-radius: 6px; width: 200px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); overflow: hidden; position: absolute; top: 0px; left: 34px; }
+  .ctx-item { padding: 8px 14px; color: #d6d6d6; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+  .ctx-item:hover { background: #383838; color: #fff; }
+  .ctx-item.active { background: #383838; color: #fff; }
+  .ctx-separator { height: 1px; background: #404040; margin: 3px 0; }
+  .ctx-icon { font-size: 14px; width: 18px; text-align: center; }
+
+  /* Message being reported (highlighted) */
+  .reported-msg-wrap { position: absolute; top: 170px; left: 400px; right: 340px; }
+  .reported-msg { background: rgba(98,100,167,0.1); border: 1px solid #6264a7; border-radius: 6px; padding: 10px 14px; display: flex; gap: 10px; }
+  .reported-msg__body { flex: 1; }
+
+  /* Modal overlay */
+  .modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 10; display: flex; align-items: center; justify-content: center; }
+  .modal { background: #fff; border-radius: 6px; width: 440px; box-shadow: 0 16px 48px rgba(0,0,0,0.7); overflow: hidden; color: #323130; font-size: 14px; }
+  .modal-header { padding: 16px 20px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e1dfdd; }
+  .modal-title { font-size: 16px; font-weight: 600; color: #323130; }
+  .modal-close { width: 28px; height: 28px; border: none; background: none; font-size: 16px; cursor: pointer; color: #605e5c; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { background: #f3f2f1; }
+  .modal-body { padding: 16px 20px 20px; }
+  .modal-desc { font-size: 13px; color: #605e5c; margin-bottom: 16px; line-height: 1.5; }
+
+  .form-field { margin-bottom: 14px; }
+  .form-label { font-size: 12px; font-weight: 600; color: #323130; display: block; margin-bottom: 4px; }
+  .form-label .required { color: #a4262c; margin-left: 2px; }
+  .form-select { width: 100%; border: 1px solid #c8c6c4; border-radius: 3px; padding: 7px 10px; font-size: 13px; font-family: inherit; color: #323130; height: 34px; appearance: none; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23605e5c'/%3E%3C/svg%3E") no-repeat right 10px center; }
+  .form-select:focus { outline: none; border-color: #0078d4; box-shadow: 0 0 0 1px #0078d4; }
+  .form-textarea { width: 100%; border: 1px solid #c8c6c4; border-radius: 3px; padding: 7px 10px; font-size: 13px; font-family: inherit; color: #323130; height: 72px; resize: none; }
+  .form-textarea:focus { outline: none; border-color: #0078d4; box-shadow: 0 0 0 1px #0078d4; }
+
+  .toggle-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0 4px; border-top: 1px solid #f3f2f1; }
+  .toggle-switch { width: 40px; height: 20px; background: #c8c6c4; border-radius: 10px; cursor: pointer; position: relative; flex-shrink: 0; margin-top: 2px; transition: background 0.2s; }
+  .toggle-switch.on { background: #6264a7; }
+  .toggle-switch::after { content: ''; width: 16px; height: 16px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; }
+  .toggle-switch.on::after { left: 22px; }
+  .toggle-label { font-size: 13px; color: #323130; line-height: 1.4; }
+  .toggle-label small { color: #605e5c; font-size: 11px; display: block; margin-top: 2px; }
+
+  .modal-footer { padding: 12px 20px 16px; display: flex; gap: 8px; justify-content: flex-end; border-top: 1px solid #e1dfdd; }
+  .btn { padding: 7px 20px; border-radius: 3px; font-size: 13px; font-family: inherit; cursor: pointer; font-weight: 600; border: none; }
+  .btn-primary { background: #6264a7; color: white; }
+  .btn-primary:hover { background: #5558a3; }
+  .btn-secondary { background: #f3f2f1; color: #323130; border: 1px solid #c8c6c4; }
+  .btn-secondary:hover { background: #e1dfdd; }
+</style>
+</head>
+<body>
+<div class="teams-shell">
+
+  <!-- Rail -->
+  <div class="rail">
+    <div class="rail-icon" style="margin-bottom:8px; font-size:26px;">🟣</div>
+    <div class="rail-icon"><div>💬</div><div class="rail-icon__label">Chat</div></div>
+    <div class="rail-icon active"><div>👥</div><div class="rail-icon__label">Teams</div></div>
+    <div class="rail-icon"><div>📅</div><div class="rail-icon__label">Calendar</div></div>
+    <div class="rail-icon"><div>📞</div><div class="rail-icon__label">Calls</div></div>
+  </div>
+
+  <!-- Left panel -->
+  <div class="left-panel">
+    <div class="left-panel__header"><div class="left-panel__title">Teams</div></div>
+    <div class="team-item"><div class="team-avatar" style="background:#107c41;">FS</div><span class="team-name">Fredian Shield</span></div>
+    <div class="channel-item active"># strategy</div>
+    <div class="channel-item"># risk-and-compliance</div>
+  </div>
+
+  <!-- Chat (blurred background) -->
+  <div class="chat-area">
+    <div class="chat-header">
+      <span style="color:#c8c6c4;">#</span>
+      <span class="chat-header__name">strategy</span>
+    </div>
+    <div class="messages">
+      <div class="msg">
+        <div class="msg-avatar" style="background:#0078d4;">NM</div>
+        <div class="msg-body">
+          <div class="msg-meta"><span class="msg-sender">Neil Manfred</span><span class="msg-time">10:31</span></div>
+          <div class="msg-text">Team — sharing the Q3 strategy brief for discussion. Five areas I'd like input on…</div>
+        </div>
+      </div>
+      <div class="msg" style="margin-top:8px;">
+        <div class="msg-avatar" style="background:#107c41;">JW</div>
+        <div class="msg-body">
+          <div class="msg-meta"><span class="msg-sender">James Whitfield</span><span class="msg-time">10:42</span></div>
+          <div class="msg-text">Neil, here's my full response to all five points. On market expansion — Southeast Asia remains the priority and Singapore should anchor the approach, followed by Malaysia in Q1 2027. The phased model reduces risk and the mid-case projects positive return by month eight. On governance, the framework is sound but I'd add a quarterly steering group…</div>
+        </div>
+      </div>
+    </div>
+    <div class="compose"><div class="compose-box">Reply to #strategy</div></div>
+  </div>
+
+  <!-- Modal overlay -->
+  <div class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Report message</span>
+        <button class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">Flag this message for human review. This does not accuse anyone of anything — it's a prompt for a second look.</p>
+
+        <div class="form-field">
+          <label class="form-label" for="reason">Reason <span class="required">*</span></label>
+          <select class="form-select" id="reason">
+            <option value="">Select a reason…</option>
+            <option>Seems rushed / incomplete</option>
+            <option>Contains inaccuracies</option>
+            <option>Unhelpfully generic</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="note">Note (optional)</label>
+          <textarea class="form-textarea" id="note" placeholder="Optional context…"></textarea>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-switch on"></div>
+          <div class="toggle-label">
+            Send sender a nudge
+            <small>After submitting, you'll get a suggested message to send James directly.</small>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-primary">Submit report</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

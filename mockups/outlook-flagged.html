@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width"/>
+<title>Outlook – Flagged</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", system-ui, sans-serif; background: #f3f2f1; font-size: 13px; color: #323130; }
+
+  /* ── Outlook shell ── */
+  .outlook-shell { display: flex; flex-direction: column; width: 1200px; height: 800px; background: #fff; border: 1px solid #c8c6c4; }
+
+  /* title bar */
+  .title-bar { height: 32px; background: #0078d4; display: flex; align-items: center; padding: 0 12px; gap: 8px; }
+  .title-bar__dots { display: flex; gap: 6px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot--r { background: #ff5f57; }
+  .dot--y { background: #ffbd2e; }
+  .dot--g { background: #28ca41; }
+  .title-bar__title { color: white; font-size: 12px; margin-left: 8px; opacity: 0.9; }
+  .title-bar__spacer { flex: 1; }
+  .title-bar__controls { display: flex; gap: 4px; }
+  .title-btn { width: 46px; height: 32px; background: transparent; border: none; color: white; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.8; }
+  .title-btn:hover { background: rgba(255,255,255,0.15); }
+
+  /* ribbon */
+  .ribbon { background: #fff; border-bottom: 1px solid #e1dfdd; }
+  .ribbon-tabs { display: flex; padding: 0 8px; border-bottom: 1px solid #e1dfdd; }
+  .ribbon-tab { padding: 8px 14px; font-size: 12px; color: #605e5c; cursor: pointer; border-bottom: 2px solid transparent; }
+  .ribbon-tab.active { color: #0078d4; border-bottom-color: #0078d4; font-weight: 600; }
+  .ribbon-commands { display: flex; align-items: center; padding: 4px 8px; gap: 2px; height: 52px; }
+  .ribbon-group { display: flex; flex-direction: column; align-items: center; border-right: 1px solid #e1dfdd; padding: 0 8px; }
+  .ribbon-group:last-child { border-right: none; }
+  .ribbon-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 8px; border-radius: 4px; cursor: pointer; min-width: 40px; }
+  .ribbon-btn:hover { background: #f3f2f1; }
+  .ribbon-btn__icon { font-size: 18px; }
+  .ribbon-btn__label { font-size: 9px; color: #605e5c; white-space: nowrap; }
+  .ribbon-btn.second-look { background: #f0f6ff; border: 1px solid #0078d4; }
+  .ribbon-btn.second-look .ribbon-btn__label { color: #0078d4; font-weight: 600; }
+
+  /* content area */
+  .content { display: flex; flex: 1; overflow: hidden; }
+
+  /* message list panel */
+  .msg-list { width: 280px; background: #fff; border-right: 1px solid #e1dfdd; display: flex; flex-direction: column; }
+  .msg-list__header { padding: 10px 14px; font-weight: 600; font-size: 14px; border-bottom: 1px solid #e1dfdd; display: flex; align-items: center; justify-content: space-between; }
+  .msg-list__filter { color: #0078d4; font-size: 11px; cursor: pointer; }
+  .msg-item { padding: 10px 14px; border-bottom: 1px solid #f3f2f1; cursor: pointer; }
+  .msg-item.selected { background: #e6f2fb; border-left: 3px solid #0078d4; padding-left: 11px; }
+  .msg-item.unread .msg-item__sender { font-weight: 700; }
+  .msg-item__sender { font-size: 13px; color: #323130; }
+  .msg-item__subject { font-size: 12px; color: #605e5c; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .msg-item__preview { font-size: 11px; color: #a19f9d; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .msg-item__meta { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
+  .msg-item__time { font-size: 10px; color: #a19f9d; }
+  .unread-dot { width: 8px; height: 8px; background: #0078d4; border-radius: 50%; }
+
+  /* reading pane */
+  .reading-pane { flex: 1; display: flex; overflow: hidden; background: #fff; }
+  .email-body { flex: 1; padding: 20px 24px; overflow-y: auto; }
+  .email-header { border-bottom: 1px solid #e1dfdd; padding-bottom: 14px; margin-bottom: 16px; }
+  .email-subject { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+  .email-meta { display: flex; align-items: flex-start; gap: 10px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: #0078d4; color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+  .email-from { flex: 1; }
+  .email-from__name { font-weight: 600; font-size: 13px; }
+  .email-from__addr { font-size: 11px; color: #605e5c; }
+  .email-from__to { font-size: 11px; color: #605e5c; margin-top: 1px; }
+  .email-time { font-size: 11px; color: #a19f9d; }
+  .email-content { font-size: 13px; line-height: 1.6; color: #323130; }
+  .email-content p { margin-bottom: 10px; }
+
+  /* task pane */
+  .task-pane { width: 280px; border-left: 1px solid #e1dfdd; display: flex; flex-direction: column; background: #faf9f8; overflow-y: auto; }
+  .task-pane__header { background: #0078d4; color: white; padding: 10px 14px; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13px; flex-shrink: 0; }
+  .task-pane__header-icon { font-size: 16px; }
+  .task-pane__body { padding: 12px 14px; flex: 1; }
+
+  /* flag badge */
+  .flag-badge { background: #fff4ce; border-left: 4px solid #f7a800; border-radius: 2px; padding: 10px 12px; display: flex; gap: 8px; align-items: flex-start; margin-bottom: 10px; }
+  .flag-badge__icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .flag-badge__text { }
+  .flag-badge__title { font-weight: 600; font-size: 13px; color: #323130; line-height: 1.3; }
+  .flag-detail { font-size: 11px; color: #605e5c; margin: 6px 0 4px; line-height: 1.4; }
+  .flag-explainer { font-size: 10px; color: #a19f9d; font-style: italic; line-height: 1.4; margin-bottom: 2px; }
+
+  /* divider */
+  .divider { border: none; border-top: 1px solid #e1dfdd; margin: 12px 0; }
+
+  /* notify section */
+  .notify-section { }
+  .notify-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+  .notify-label strong { font-size: 12px; color: #323130; display: block; margin-bottom: 2px; }
+  .notify-label p { font-size: 10px; color: #605e5c; line-height: 1.4; }
+  .btn-notify { background: #f3f2f1; border: 1px solid #c8c6c4; border-radius: 3px; padding: 5px 10px; font-size: 11px; color: #323130; cursor: pointer; white-space: nowrap; flex-shrink: 0; font-family: inherit; }
+  .btn-notify:hover { background: #e1dfdd; }
+
+  /* report section */
+  .section-title { font-size: 12px; font-weight: 600; color: #323130; margin-bottom: 8px; }
+  .form-label { font-size: 11px; font-weight: 600; color: #323130; display: block; margin-bottom: 3px; margin-top: 8px; }
+  .form-select, .form-textarea { width: 100%; border: 1px solid #c8c6c4; border-radius: 2px; padding: 5px 8px; font-size: 12px; font-family: inherit; color: #323130; background: #fff; }
+  .form-select { height: 28px; }
+  .form-textarea { height: 56px; resize: none; }
+  .form-select:focus, .form-textarea:focus { outline: none; border-color: #0078d4; box-shadow: 0 0 0 1px #0078d4; }
+  .btn-submit { width: 100%; margin-top: 10px; background: #0078d4; color: white; border: none; border-radius: 2px; padding: 7px; font-size: 12px; font-family: inherit; cursor: pointer; font-weight: 600; }
+  .btn-submit:hover { background: #106ebe; }
+
+  /* opt-out */
+  .opt-out { display: flex; align-items: flex-start; gap: 7px; margin-top: 4px; }
+  .opt-out input { margin-top: 2px; accent-color: #0078d4; }
+  .opt-out label { font-size: 11px; color: #605e5c; line-height: 1.4; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="outlook-shell">
+
+  <!-- Title bar -->
+  <div class="title-bar">
+    <div class="title-bar__dots">
+      <div class="dot dot--r"></div>
+      <div class="dot dot--y"></div>
+      <div class="dot dot--g"></div>
+    </div>
+    <span class="title-bar__title">Re: Q3 Strategy Update — neil.manfred@fredianshield.com — Outlook</span>
+    <div class="title-bar__spacer"></div>
+    <div class="title-bar__controls">
+      <div class="title-btn">─</div>
+      <div class="title-btn">□</div>
+      <div class="title-btn">✕</div>
+    </div>
+  </div>
+
+  <!-- Ribbon -->
+  <div class="ribbon">
+    <div class="ribbon-tabs">
+      <div class="ribbon-tab active">Home</div>
+      <div class="ribbon-tab">Send / Receive</div>
+      <div class="ribbon-tab">Folder</div>
+      <div class="ribbon-tab">View</div>
+      <div class="ribbon-tab">Help</div>
+    </div>
+    <div class="ribbon-commands">
+      <div class="ribbon-group">
+        <div class="ribbon-btn"><div class="ribbon-btn__icon">↩</div><div class="ribbon-btn__label">Reply</div></div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-btn"><div class="ribbon-btn__icon">🗑</div><div class="ribbon-btn__label">Delete</div></div>
+        <div class="ribbon-btn"><div class="ribbon-btn__icon">📁</div><div class="ribbon-btn__label">Archive</div></div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-btn"><div class="ribbon-btn__icon">🏷</div><div class="ribbon-btn__label">Tags</div></div>
+      </div>
+      <div class="ribbon-group" style="margin-left:auto;">
+        <div class="ribbon-btn second-look"><div class="ribbon-btn__icon">⚡</div><div class="ribbon-btn__label">Second Look</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="content">
+
+    <!-- Message list -->
+    <div class="msg-list">
+      <div class="msg-list__header">Inbox <span class="msg-list__filter">Filter</span></div>
+
+      <div class="msg-item selected">
+        <div class="msg-item__meta"><span class="msg-item__sender">James Whitfield</span><span class="msg-item__time">10:42</span></div>
+        <div class="msg-item__subject">Re: Q3 Strategy Update</div>
+        <div class="msg-item__preview">Thanks for the detailed brief. Here's our response…</div>
+      </div>
+
+      <div class="msg-item unread">
+        <div class="msg-item__meta"><span class="msg-item__sender">Sarah Chen</span><div class="unread-dot"></div></div>
+        <div class="msg-item__subject">Budget sign-off — week 31</div>
+        <div class="msg-item__preview">Please review the attached before EOD</div>
+      </div>
+
+      <div class="msg-item">
+        <div class="msg-item__meta"><span class="msg-item__sender">Teams notifications</span><span class="msg-item__time">09:15</span></div>
+        <div class="msg-item__subject">Marcus replied in #general</div>
+        <div class="msg-item__preview">Sounds good — let's pick this up Monday</div>
+      </div>
+
+      <div class="msg-item">
+        <div class="msg-item__meta"><span class="msg-item__sender">HR Team</span><span class="msg-item__time">Yesterday</span></div>
+        <div class="msg-item__subject">Annual leave policy update</div>
+        <div class="msg-item__preview">Please read the updated guidance on carry-over</div>
+      </div>
+    </div>
+
+    <!-- Reading pane -->
+    <div class="reading-pane">
+      <div class="email-body">
+        <div class="email-header">
+          <div class="email-subject">Re: Q3 Strategy Update</div>
+          <div class="email-meta">
+            <div class="avatar">JW</div>
+            <div class="email-from">
+              <div class="email-from__name">James Whitfield</div>
+              <div class="email-from__addr">james.whitfield@fredianshield.com</div>
+              <div class="email-from__to">To: neil.manfred@fredianshield.com</div>
+            </div>
+            <div class="email-time">Thu 31 Jul 2026, 10:42</div>
+          </div>
+        </div>
+        <div class="email-content">
+          <p>Neil,</p>
+          <p>Thanks for the detailed brief. Here's our full response to each of the five points you raised in the strategy document.</p>
+          <p>On the first point regarding market expansion — we believe the Southeast Asian opportunity remains strong and would recommend a phased approach beginning with Singapore as the anchor market, followed by Malaysia in Q1 2027. The risk profile improves significantly with this sequencing.</p>
+          <p>On resourcing: the current team structure can absorb the initial phase without additional headcount, provided we redistribute approximately 20% of the existing commercial team's capacity. We've modelled three scenarios and the mid-case shows positive return by month eight.</p>
+          <p>The governance framework you outlined is broadly sensible. We'd suggest adding a quarterly steering committee with representation from both commercial and risk functions.</p>
+          <p>Happy to walk through the detail on a call — let me know what works for you this week.</p>
+          <p>James</p>
+        </div>
+      </div>
+
+      <!-- Task pane -->
+      <div class="task-pane">
+        <div class="task-pane__header">
+          <span class="task-pane__header-icon">⚡</span>
+          Second Look
+        </div>
+        <div class="task-pane__body">
+
+          <!-- Flag badge -->
+          <div class="flag-badge">
+            <div class="flag-badge__icon">⚠️</div>
+            <div class="flag-badge__text">
+              <div class="flag-badge__title">Sent quickly after receipt — worth a second look</div>
+            </div>
+          </div>
+          <div class="flag-detail">Reply of 218 words sent within 19s (688 wpm — threshold: 150 wpm)</div>
+          <div class="flag-explainer">This indicator is based on reply time relative to message length only. It does not detect AI-generated content.</div>
+
+          <hr class="divider"/>
+
+          <!-- Notify section -->
+          <div class="notify-section">
+            <div class="notify-row">
+              <div class="notify-label">
+                <strong>Let the sender know</strong>
+                <p>Opens a pre-filled email to the sender. You decide whether to send it.</p>
+              </div>
+              <button class="btn-notify">Notify</button>
+            </div>
+          </div>
+
+          <hr class="divider"/>
+
+          <!-- Report section -->
+          <div class="section-title">Report this message</div>
+          <label class="form-label" for="reason">Reason</label>
+          <select class="form-select" id="reason">
+            <option>Select a reason…</option>
+            <option>Seems rushed / incomplete</option>
+            <option>Contains inaccuracies</option>
+            <option>Unhelpfully generic</option>
+            <option>Other</option>
+          </select>
+          <label class="form-label" for="note">Note (optional)</label>
+          <textarea class="form-textarea" id="note" placeholder="Optional context…"></textarea>
+          <button class="btn-submit">Submit report</button>
+
+          <hr class="divider"/>
+
+          <!-- Opt-out -->
+          <div class="opt-out">
+            <input type="checkbox" id="badge-toggle" checked/>
+            <label for="badge-toggle">Show review time badges on messages I receive</label>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

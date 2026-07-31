@@ -44,6 +44,8 @@ See `docs/deployment.md`. The backend runs on Azure App Service (Linux, Node 20)
 
 The task pane opens on the right of the reading pane when the user clicks the Second Look ribbon button.
 
+![Outlook — flagged](mockups/outlook-flagged.png)
+
 ```
 ╔══════════════════════════════════╗
 ║  ⚡ Second Look                  ║
@@ -100,6 +102,8 @@ The task pane opens on the right of the reading pane when the user clicks the Se
 
 ### Outlook — clean message
 
+![Outlook — clean](mockups/outlook-clean.png)
+
 ```
 ╔══════════════════════════════════╗
 ║  ⚡ Second Look                  ║
@@ -140,6 +144,8 @@ The task pane opens on the right of the reading pane when the user clicks the Se
 
 Posted as a reply in the channel/chat when a message crosses the review-time threshold. Subtle — does not block or alter the original message.
 
+![Teams — passive flag](mockups/teams-passive-flag.png)
+
 ```
 ┌─────────────────────────────────────────────────────┐
 │  Sarah Chen  10:42                                  │
@@ -168,6 +174,8 @@ Posted as a reply in the channel/chat when a message crosses the review-time thr
 
 Accessed via the `···` menu on any message → **Report as low-review**.
 The notify toggle only appears when the sender is on the same domain.
+
+![Teams — report dialog](mockups/teams-report-dialog.png)
 
 ```
 ┌───────────────────────────────────────┐
