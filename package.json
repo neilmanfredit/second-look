@@ -1,0 +1,21 @@
+{
+  "name": "second-look",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "outlook-addin",
+    "teams-app",
+    "dashboard"
+  ],
+  "scripts": {
+    "dev": "concurrently -n backend,outlook,teams \"npm run dev -w backend\" \"npm run dev -w outlook-addin\" \"npm run dev -w teams-app\"",
+    "build": "npm run build -w backend && npm run build -w outlook-addin && npm run build -w teams-app && npm run build -w dashboard",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.4.5"
+  }
+}

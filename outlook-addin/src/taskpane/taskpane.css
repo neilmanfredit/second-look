@@ -1,0 +1,96 @@
+body {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+  margin: 12px;
+  color: #333;
+  line-height: 1.4;
+}
+
+.hidden { display: none; }
+
+.badge {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.badge--warn {
+  background: #fff4e0;
+  border-left: 4px solid #e8a020;
+  color: #7a4b00;
+}
+
+.badge--ok {
+  background: #f0faf0;
+  border-left: 4px solid #3aab3a;
+  color: #1a5c1a;
+}
+
+.badge__icon { font-size: 18px; flex-shrink: 0; }
+.badge__label { font-weight: 600; }
+
+.detail { font-size: 12px; color: #666; margin-top: 4px; }
+
+.explainer {
+  font-size: 11px;
+  color: #888;
+  font-style: italic;
+  margin-top: 8px;
+}
+
+h3 { font-size: 13px; margin: 12px 0 8px; }
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 8px 0 3px;
+}
+
+select, textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+textarea { resize: vertical; }
+
+button {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px;
+  background: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+button:disabled { background: #a0a0a0; cursor: default; }
+button:hover:not(:disabled) { background: #106ebe; }
+
+#report-status {
+  margin-top: 8px;
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 3px;
+}
+
+#report-status.success { background: #f0faf0; color: #1a5c1a; }
+#report-status.error { background: #fff0f0; color: #8b0000; }
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #555;
+  cursor: pointer;
+}

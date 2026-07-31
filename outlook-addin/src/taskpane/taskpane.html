@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Second Look</title>
+  <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <link rel="stylesheet" href="taskpane.css"/>
+</head>
+<body>
+  <div id="app">
+    <div id="loading" class="state">
+      <p>Checking review time…</p>
+    </div>
+
+    <div id="no-flag" class="state hidden">
+      <div class="badge badge--ok">
+        <span class="badge__icon">✓</span>
+        <span class="badge__label">No review time concern</span>
+      </div>
+    </div>
+
+    <div id="flag" class="state hidden">
+      <div class="badge badge--warn">
+        <span class="badge__icon">⚠</span>
+        <span class="badge__label">Sent quickly after receipt — worth a second look</span>
+      </div>
+      <p class="detail" id="flag-detail"></p>
+      <p class="explainer">
+        This indicator is based on reply time relative to message length only.
+        It does not detect AI-generated content.
+      </p>
+    </div>
+
+    <div id="report-section" class="hidden">
+      <hr/>
+      <h3>Report this message</h3>
+      <form id="report-form">
+        <label for="reason">Reason</label>
+        <select id="reason" name="reason" required>
+          <option value="">Select a reason…</option>
+          <option value="rushed">Seems rushed / incomplete</option>
+          <option value="inaccurate">Contains inaccuracies</option>
+          <option value="generic">Unhelpfully generic</option>
+          <option value="other">Other</option>
+        </select>
+
+        <label for="note">Note (optional, max 500 chars)</label>
+        <textarea id="note" name="note" maxlength="500" rows="3" placeholder="Optional context…"></textarea>
+
+        <button type="submit" id="submit-btn">Submit report</button>
+        <p id="report-status" class="hidden"></p>
+      </form>
+    </div>
+
+    <div id="opt-out-section">
+      <hr/>
+      <label class="toggle">
+        <input type="checkbox" id="badges-toggle" checked/>
+        Show review time badges on messages I receive
+      </label>
+    </div>
+  </div>
+
+  <script src="taskpane.js"></script>
+</body>
+</html>

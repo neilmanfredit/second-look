@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model ReviewFlag {
+  id          String   @id @default(cuid())
+  messageId   String   @unique @map("message_id")
+  source      String   // "outlook" | "teams"
+  senderUpn   String   @map("sender_upn")
+  receivedAt  DateTime @map("received_at")
+  sentAt      DateTime @map("sent_at")
+  wordCount   Int      @map("word_count")
+  computedWpm Float    @map("computed_wpm")
+  flagged     Boolean  @default(false)
+  flagReason  String?  @map("flag_reason")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  reports Report[]
+
+  @@index([senderUpn])
+  @@index([createdAt])
+  @@map("review_flags")
+}
+
+model Report {
+  id           String     @id @default(cuid())
+  messageId    String     @map("message_id")
+  reporterUpn  String     @map("reporter_upn")
+  reportedUpn  String     @map("reported_upn")
+  reasonCode   String     @map("reason_code")
+  note         String?
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  reviewFlag   ReviewFlag? @relation(fields: [messageId], references: [messageId])
+
+  @@index([reporterUpn])
+  @@index([reportedUpn])
+  @@index([createdAt])
+  @@map("reports")
+}
+
+model UserPreference {
+  upn              String  @id
+  badgesEnabled    Boolean @default(true) @map("badges_enabled")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("user_preferences")
+}
+
+model AdminConfig {
+  id                   Int     @id @default(autoincrement())
+  wpmThreshold         Int     @default(150) @map("wpm_threshold")
+  minWordCountToFlag   Int     @default(50) @map("min_word_count_to_flag")
+  minSecondsBelowWpm   Int     @default(60) @map("min_seconds_below_wpm")
+  maxReportsPerDay     Int     @default(10) @map("max_reports_per_day")
+  dataRetentionDays    Int     @default(90) @map("data_retention_days")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+  updatedBy            String  @map("updated_by")
+
+  @@map("admin_config")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorUpn  String   @map("actor_upn")
+  action    String
+  target    String?
+  metadata  String?  // JSON string
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([actorUpn])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

@@ -1,0 +1,61 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.17/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.17",
+  "version": "0.1.0",
+  "id": "<!-- Replace with a fresh GUID -->",
+  "packageName": "com.secondlook.teamsapp",
+  "developer": {
+    "name": "Second Look",
+    "websiteUrl": "https://github.com/neilmanfredit/second-look",
+    "privacyUrl": "https://github.com/neilmanfredit/second-look/blob/main/docs/privacy.md",
+    "termsOfUseUrl": "https://github.com/neilmanfredit/second-look/blob/main/docs/privacy.md"
+  },
+  "name": {
+    "short": "Second Look",
+    "full": "Second Look — Review Time Indicator"
+  },
+  "description": {
+    "short": "Flags messages sent unusually quickly after drafting.",
+    "full": "Second Look highlights messages where reply time relative to message length suggests the content may not have been carefully reviewed before sending. Not an AI detector — a review-time indicator. Always available to report messages for human follow-up."
+  },
+  "icons": {
+    "outline": "icon-outline.png",
+    "color": "icon-color.png"
+  },
+  "accentColor": "#e8a020",
+  "bots": [
+    {
+      "botId": "<!-- Replace with Bot Framework app ID -->",
+      "scopes": ["personal", "team", "groupchat"],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "composeExtensions": [
+    {
+      "botId": "<!-- Replace with Bot Framework app ID -->",
+      "commands": [
+        {
+          "id": "reportLowReview",
+          "type": "action",
+          "title": "Report as low-review",
+          "description": "Flag this message as potentially not carefully reviewed before sending",
+          "context": ["message"],
+          "fetchTask": true
+        }
+      ],
+      "messageHandlers": [
+        {
+          "type": "link",
+          "value": { "domains": [] }
+        }
+      ]
+    }
+  ],
+  "permissions": ["identity", "messageTeamMembers"],
+  "validDomains": ["YOUR_BOT_HOST"],
+  "webApplicationInfo": {
+    "id": "<!-- Replace with Azure AD app client ID -->",
+    "resource": "api://YOUR_BOT_HOST/<!-- Replace with Azure AD app client ID -->"
+  }
+}

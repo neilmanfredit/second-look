@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
+           xsi:type="MailApp">
+
+  <Id><!-- Replace with a fresh GUID from https://guidgenerator.com/ --></Id>
+  <Version>0.1.0.0</Version>
+  <ProviderName>Second Look</ProviderName>
+  <DefaultLocale>en-GB</DefaultLocale>
+  <DisplayName DefaultValue="Second Look"/>
+  <Description DefaultValue="Flags messages sent unusually quickly after drafting. Not an AI detector — a review-time indicator."/>
+
+  <IconUrl DefaultValue="https://YOUR_ADDIN_HOST/assets/icon-80.png"/>
+  <HighResolutionIconUrl DefaultValue="https://YOUR_ADDIN_HOST/assets/icon-128.png"/>
+  <SupportUrl DefaultValue="https://github.com/neilmanfredit/second-look"/>
+
+  <AppDomains>
+    <AppDomain>https://YOUR_ADDIN_HOST</AppDomain>
+  </AppDomains>
+
+  <Hosts>
+    <Host Name="Mailbox"/>
+  </Hosts>
+
+  <Requirements>
+    <Sets>
+      <Set Name="Mailbox" MinVersion="1.8"/>
+    </Sets>
+  </Requirements>
+
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://YOUR_ADDIN_HOST/taskpane.html"/>
+        <RequestedHeight>250</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+
+  <Permissions>ReadWriteMailbox</Permissions>
+
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
+  </Rule>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
+
+      <Requirements>
+        <bt:Sets DefaultMinVersion="1.8">
+          <bt:Set Name="Mailbox"/>
+        </bt:Sets>
+      </Requirements>
+
+      <Hosts>
+        <Host xsi:type="MailHost">
+          <MobileFormFactor>
+            <FunctionFile resid="Commands.Url"/>
+            <ExtensionPoint xsi:type="MobileMessageReadCommandSurface">
+              <bt:OfficeTab id="TabDefault">
+                <bt:Group id="msgReadGroup">
+                  <bt:Label resid="GroupLabel"/>
+                  <Control xsi:type="Button" id="msgReadOpenPaneButton">
+                    <bt:Label resid="TaskpaneButton.Label"/>
+                    <bt:Supertip>
+                      <bt:Title resid="TaskpaneButton.Label"/>
+                      <bt:Description resid="TaskpaneButton.Tooltip"/>
+                    </bt:Supertip>
+                    <bt:Icon>
+                      <bt:Image size="80" resid="Icon.80x80"/>
+                    </bt:Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <bt:SourceLocation resid="Taskpane.Url"/>
+                    </Action>
+                  </Control>
+                </bt:Group>
+              </bt:OfficeTab>
+            </ExtensionPoint>
+          </MobileFormFactor>
+
+          <DesktopFormFactor>
+            <FunctionFile resid="Commands.Url"/>
+            <ExtensionPoint xsi:type="MessageReadCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="msgReadGroupDesktop">
+                  <Label resid="GroupLabel"/>
+                  <Control xsi:type="Button" id="msgReadOpenPaneButtonDesktop">
+                    <Label resid="TaskpaneButton.Label"/>
+                    <Supertip>
+                      <Title resid="TaskpaneButton.Label"/>
+                      <Description resid="TaskpaneButton.Tooltip"/>
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="Icon.16x16"/>
+                      <bt:Image size="32" resid="Icon.32x32"/>
+                      <bt:Image size="80" resid="Icon.80x80"/>
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <bt:SourceLocation resid="Taskpane.Url"/>
+                      <SupportsPinning>true</SupportsPinning>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
+          </DesktopFormFactor>
+        </Host>
+      </Hosts>
+
+      <Resources>
+        <bt:Images>
+          <bt:Image id="Icon.16x16" DefaultValue="https://YOUR_ADDIN_HOST/assets/icon-16.png"/>
+          <bt:Image id="Icon.32x32" DefaultValue="https://YOUR_ADDIN_HOST/assets/icon-32.png"/>
+          <bt:Image id="Icon.80x80" DefaultValue="https://YOUR_ADDIN_HOST/assets/icon-80.png"/>
+        </bt:Images>
+        <bt:Urls>
+          <bt:Url id="Commands.Url" DefaultValue="https://YOUR_ADDIN_HOST/commands.html"/>
+          <bt:Url id="Taskpane.Url" DefaultValue="https://YOUR_ADDIN_HOST/taskpane.html"/>
+        </bt:Urls>
+        <bt:ShortStrings>
+          <bt:String id="GroupLabel" DefaultValue="Second Look"/>
+          <bt:String id="TaskpaneButton.Label" DefaultValue="Second Look"/>
+        </bt:ShortStrings>
+        <bt:LongStrings>
+          <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Check review time indicator and report low-review messages"/>
+        </bt:LongStrings>
+      </Resources>
+
+    </VersionOverrides>
+  </VersionOverrides>
+</OfficeApp>
