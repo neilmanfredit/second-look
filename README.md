@@ -36,7 +36,7 @@ npm run dev -w teams-app
 
 ## Deployment
 
-See `docs/deployment.md`. The backend is designed to run on Azure App Service or a self-hosted Node environment (Proxmox/home lab also viable for pilot).
+See `docs/deployment.md`. The backend runs on Azure App Service (Linux, Node 20) in the neilmanfred.com / fredianshield.com M365 tenant. CI/CD via `.github/workflows/deploy-backend.yml` — requires `AZURE_WEBAPP_PUBLISH_PROFILE` set as a GitHub secret.
 
 ## Open questions
 
