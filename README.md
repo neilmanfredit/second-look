@@ -41,7 +41,7 @@ See `docs/deployment.md`. The backend is designed to run on Azure App Service or
 ## Open questions
 
 Before go-live, confirm:
-1. Tenant-wide admin deployment vs. individual install (changes consent posture)
+1. ~~Tenant-wide admin deployment vs. individual install~~ — **decided: individual install, user consent only**
 2. Should senders see their own message was flagged, or is this recipient-only?
 3. M365 dev tenant available, or piloting against production?
 

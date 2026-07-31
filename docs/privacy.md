@@ -27,7 +27,9 @@ Processing employee behaviour data (response speed) is likely to require one of:
 - **Legitimate interests** (Art. 6(1)(f)) — the organisation's interest in ensuring AI-generated content is reviewed before sending. A legitimate interests assessment (LIA) is required.
 - **Legal obligation** or **contract** may also be arguable depending on employment contract terms.
 
-Sensitive categories: response speed is not a special category, but it touches HR-adjacent behavioural monitoring, so a Data Protection Impact Assessment (DPIA) is strongly recommended before tenant-wide rollout.
+Sensitive categories: response speed is not a special category, but it touches HR-adjacent behavioural monitoring.
+
+**Deployment model note:** This tool is individually installed (each user consents for their own mailbox). This is a more limited consent model than tenant-wide deployment. However, reports submitted by one user about another still constitute processing of the reported person's data — that person has not consented. The lawful basis for processing report data about the reported individual still needs to be established (most likely legitimate interests). A DPIA is still recommended before rollout beyond a small pilot.
 
 ---
 

@@ -20,9 +20,7 @@ Create a single app registration that covers the backend API, Outlook add-in (SS
 | `offline_access` | Delegated | Refresh tokens for Outlook add-in SSO | No |
 | `openid`, `profile` | Delegated | Identity claims for token validation | No |
 
-> **Note:** `Mail.Read` gives access to the full mailbox of any consenting user. The add-in only reads metadata of the currently open message — it never reads or stores message body content. The code is auditable in this repo.
->
-> If deploying tenant-wide (admin consent flow), you will need the admin to grant `Mail.Read` on behalf of all users. This changes the consent posture significantly — see [Open questions in README](../README.md).
+> **Deployment model: individual install (user consent).** Each user installs the add-in themselves and consents to `Mail.Read` for their own mailbox only. No admin consent is required and no tenant-wide data access is granted. The add-in only reads metadata of the currently open message — it never reads or stores message body content. The code is auditable in this repo.
 
 ### Expose an API (for backend token validation)
 
@@ -76,7 +74,7 @@ For production, switch `DATABASE_URL` to a PostgreSQL connection string and chan
 2. In Outlook on the web: **Settings → Manage add-ins → Upload a custom add-in → Upload manifest file**
 3. Select `outlook-addin/manifest.xml` (after updating `YOUR_ADDIN_HOST` to `localhost:3001`)
 
-For tenant-wide deployment: upload the manifest via **Microsoft 365 admin centre → Settings → Integrated apps**.
+Each user installs individually — no admin centre deployment needed. If that changes in future, the manifest is already structured for it.
 
 ---
 

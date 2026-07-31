@@ -52,7 +52,7 @@
       ]
     }
   ],
-  "permissions": ["identity", "messageTeamMembers"],
+  "permissions": ["identity"],
   "validDomains": ["YOUR_BOT_HOST"],
   "webApplicationInfo": {
     "id": "<!-- Replace with Azure AD app client ID -->",
