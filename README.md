@@ -36,7 +36,7 @@ npm run dev -w teams-app
 
 ## Deployment
 
-See `docs/deployment.md`. The backend runs on Azure App Service (Linux, Node 20) in the neilmanfred.com M365 tenant. CI/CD via `.github/workflows/deploy-backend.yml` — requires `AZURE_WEBAPP_PUBLISH_PROFILE` set as a GitHub secret.
+See `docs/deployment.md`. The backend runs on Azure App Service (Linux, Node 20) in M365 tenant. CI/CD via `.github/workflows/deploy-backend.yml` — requires `AZURE_WEBAPP_PUBLISH_PROFILE` set as a GitHub secret.
 
 ## What the end user sees
 
