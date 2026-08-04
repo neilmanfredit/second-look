@@ -2,7 +2,7 @@
 
 ## Backend — Azure App Service
 
-The backend runs on Azure App Service (Linux, Node 20) in the same Azure subscription as the neilmanfred.com / fredianshield.com Microsoft 365 tenant. This keeps the app registration, the backend, and M365 data residency all in one place.
+The backend runs on Azure App Service (Linux, Node 20) in the same Azure subscription This keeps the app registration, the backend, and M365 data residency all in one place.
 
 ### One-time Azure setup
 
