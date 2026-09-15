@@ -4,6 +4,8 @@ A Microsoft 365 add-in (Outlook + Teams) that flags messages where the time betw
 
 **This is not an AI detector.** The signal is review time, not authorship.
 
+this is in earlier alpha and I'm looking for testers
+
 ---
 
 ## Components
